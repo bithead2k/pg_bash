@@ -1,33 +1,66 @@
 #!/bin/bash
 #===============================================================================
 #
-#          FILE: psql2md
-# 
-#         USAGE: psql --no-psqlrc -qtc SELECT 530 "count", 0.963636363633636" | ./psql2md 
-# 
-#   DESCRIPTION: pull table output from psql over stdin and convert it to markdown
-# 
-#         NOTES: 
-#  count |        ?column?        
-# -------+------------------------
-#   530 | 0.96363636363636363636
-# (1 row)
+#          FILE: psql2md.bash
 #
-# becomes
-# | count | ?column?              |
-# |-------|-----------------------|
-# | 530   | 0.96363636363636363636|
-# (1 row)
+#         USAGE: ./psql2md.bash
 #
-#        AUTHOR: Kirk Roybal (), kirk@webfinish.com
-#  ORGANIZATION: 
-#       CREATED: 02/02/2018 10:46
+#   DESCRIPTION:  Convert pipe delimited psql output to markdown table
+#
+#       OPTIONS: ---
+#  REQUIREMENTS: ---
+#          BUGS: ---
+#         NOTES: ---
+#        AUTHOR: Kirk L. Roybal (DBRE), kirk@webfinish.com
+#  ORGANIZATION: Private
+#       CREATED: 04/20/2021 22:40:49
 #      REVISION:  ---
 #===============================================================================
 
-set -o nounset                              # Treat unset variables as an error
 
-cat - | 
+
+ScriptVersion="1.0"
+
+#===  FUNCTION  ================================================================
+#         NAME:  usage
+#  DESCRIPTION:  Display usage information.
+#===============================================================================
+function usage ()
+{
+	cat <<- EOT
+
+  Usage :  ${0##/*/} [options] [--] 
+
+  Options: 
+  -f|file [name]  Input file Default: STDIN
+  -h|help         Display this message
+  -v|version      Display script version
+
+	EOT
+}    # ----------  end of function usage  ----------
+
+#-----------------------------------------------------------------------
+#  Handle command line arguments
+#-----------------------------------------------------------------------
+input='-'
+while getopts ":f:hv" opt
+do
+  case $opt in
+
+    f|file     ) intput="$OPTARG";;
+
+    h|help     )  usage; exit 0   ;;
+
+    v|version  )  echo "$0 -- Version $ScriptVersion"; exit 0   ;;
+
+    \? )  echo -e "\n  Option does not exist : $OPTARG\n"
+          usage; exit 1   ;;
+
+  esac    # --- end of case ---
+done
+shift $(($OPTIND-1))
+
+cat "$input" | 
     sed '/^[[:space:]]*$/d' | # remove blank lines
     sed '1s/^[[:space:]]*//g' | # trim leading space on first line
     sed '1s/[[:space:]]*|[[:space:]]*/|/g' | #replace the spaces in the header line
