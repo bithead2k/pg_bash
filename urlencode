@@ -11,10 +11,10 @@
 #  REQUIREMENTS: ---
 #          BUGS: ---
 #         NOTES: ---
-#        AUTHOR: Kirk L. Roybal (DBRE), Kirk.Roybal@credativ.us
-#  ORGANIZATION: Instaclustr
+#        AUTHOR: Kirk L. Roybal (DBRE), iirk.roybal@gmail.com
 #       CREATED: 05/06/2021 12:51:08 PM
 #      REVISION:  ---
+#       LICENSE: PostgreSQL
 #===============================================================================
 set -eo pipefail
 
